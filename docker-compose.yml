@@ -1,0 +1,88 @@
+# =====================================================================
+# DOCKER COMPOSE - SHARED INFRASTRUCTURE
+# =====================================================================
+# Repository ini berfungsi sebagai pusat infrastruktur bagi seluruh 
+# aplikasi (multi-app) yang berjalan di server ini.
+# =====================================================================
+
+services:
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: infra-nginx-proxy-manager
+    restart: always
+    ports:
+      # Public HTTP Port
+      - '80:80'
+      # Public HTTPS Port
+      - '443:443'
+      # Admin Web UI Port (Disarankan tidak di-expose ke publik jika IP tidak aman)
+      - '81:81'
+    environment:
+      DB_MYSQL_HOST: "mysql"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "${NPM_DB_PASSWORD}"
+      DB_MYSQL_NAME: "npm"
+      # Uncomment if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - npm-data:/data
+      - npm-letsencrypt:/etc/letsencrypt
+    networks:
+      - rekayasa-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:9.7.0
+    container_name: infra-mysql
+    restart: always
+    environment:
+      TZ: Asia/Jakarta
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      # Inisialisasi DB untuk NPM
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "${NPM_DB_PASSWORD}"
+    # PORT TIDAK DI-EXPOSE KE HOST SECARA DEFAULT UNTUK KEAMANAN
+    # Jika butuh remote (HeidiSQL), gunakan SSH Tunnel ke port 3306.
+    # ports:
+    #   - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf:ro
+      - ./mysql/healthcheck.sh:/healthcheck.sh:ro
+      - infra-backup:/backup
+    healthcheck:
+      test: ["CMD", "sh", "/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    networks:
+      - rekayasa-network
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: '2.0'
+        reservations:
+          memory: 1G
+          cpus: '1.0'
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+volumes:
+  mysql-data:
+  infra-backup:
+  npm-data:
+  npm-letsencrypt:
+
+networks:
+  rekayasa-network:
+    name: rekayasa-network
+    driver: bridge

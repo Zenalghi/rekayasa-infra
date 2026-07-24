@@ -41,10 +41,10 @@ git clone https://github.com/Zenalghi/rekayasa-infra infra
 Masuk ke direktori infra dan siapkan konfigurasi password:
 ```bash
 cd /srv/workspace/infra
-cp .env.example .env.production
+cp .env.example .env
 ```
 ```bash
-nano .env.production
+nano .env
 ```
 
 Isi variabel berikut dengan password yang **kuat dan unik**:
@@ -53,7 +53,7 @@ Isi variabel berikut dengan password yang **kuat dan unik**:
 
 ### 4. Jalankan Infra
 
-Setelah file `.env.production` dikonfigurasi, jalankan container infra:
+Setelah file `.env` dikonfigurasi, jalankan container infra:
 ```bash
 docker compose up -d
 ```
@@ -121,7 +121,6 @@ Masuk ke folder aplikasi dan sesuaikan konfigurasi environment dengan database y
 ```bash
 cd /srv/workspace/apps/master-gambar
 cp .env.example .env.production
-nano .env.production
 ```
 Pastikan `DB_HOST=infra-mysql` dan sesuaikan kredensial `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
 

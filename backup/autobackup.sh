@@ -5,14 +5,14 @@
 # Script ini akan membackup:
 # 1. Seluruh database MySQL (all-databases)
 # 2. File konfigurasi Nginx Proxy Manager & SSL
-# 3. File .env.production
+# 3. File .env
 # =====================================================================
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-ENV_FILE="${PROJECT_DIR}/.env.production"
+ENV_FILE="${PROJECT_DIR}/.env"
 
 # Warna untuk output
 RED='\033[0;31m'
@@ -28,7 +28,7 @@ echo -e "Waktu: $(date)"
 if [ -f "${ENV_FILE}" ]; then
     source "${ENV_FILE}"
 else
-    echo -e "${RED}ERROR: File .env.production tidak ditemukan di ${ENV_FILE}${NC}"
+    echo -e "${RED}ERROR: File .env tidak ditemukan di ${ENV_FILE}${NC}"
     exit 1
 fi
 
@@ -75,10 +75,10 @@ NPM_SIZE=$(du -sh "${NPM_ARCHIVE}" | cut -f1)
 echo -e "${GREEN}   ✓ Backup NPM selesai (${NPM_SIZE})${NC}"
 
 # ---------------------------------------------------------
-# 3. Backup file .env.production
+# 3. Backup file .env
 # ---------------------------------------------------------
-echo -e "${YELLOW}-> [3/3] Membackup file .env.production...${NC}"
-cp "${ENV_FILE}" "${TARGET_FOLDER}/env_production_${DATE_TAG}.backup"
+echo -e "${YELLOW}-> [3/3] Membackup file .env...${NC}"
+cp "${ENV_FILE}" "${TARGET_FOLDER}/env_${DATE_TAG}.backup"
 echo -e "${GREEN}   ✓ Backup .env selesai${NC}"
 
 # ---------------------------------------------------------

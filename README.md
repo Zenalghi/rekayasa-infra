@@ -61,10 +61,8 @@ docker compose up -d
 ### 5. Akses Nginx Proxy Manager
 
 - URL Web Admin: `http://<IP-SERVER>:81`
-- Default Email: `admin@example.com`
-- Default Password: `changeme`
 
-> Segera ganti password default setelah login pertama kali!
+> **Catatan:** Pada versi Nginx Proxy Manager terbaru, Anda tidak perlu lagi login dengan email/password default. Saat pertama kali mengakses halaman web admin, Anda akan langsung disuguhkan form pendaftaran untuk mengisi **Full Name, Email, dan New Password** akun Admin Anda.
 
 ### 6. Setup Backup Otomatis
 

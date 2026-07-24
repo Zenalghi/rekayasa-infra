@@ -13,8 +13,28 @@ Network utama bernama `rekayasa-network`. Semua aplikasi harus menempel (attach)
 
 ## Cara Menjalankan
 
-### 1. Copy file konfigurasi
+### 1. Persiapan Workspace
+
+Buat folder workspace dan atur permission di server:
 ```bash
+sudo mkdir -p /srv/workspace
+sudo chown -R "$(whoami)":"$(whoami)" /srv/workspace
+ls -ld /srv/workspace
+```
+
+### 2. Clone Repositori Infra
+
+Clone repositori infrastruktur ke dalam workspace:
+```bash
+cd /srv/workspace
+git clone https://github.com/Zenalghi/rekayasa-infra infra
+```
+
+### 3. Copy & Edit Konfigurasi Infra
+
+Masuk ke direktori infra dan siapkan konfigurasi:
+```bash
+cd /srv/workspace/infra
 cp .env.example .env.production
 nano .env.production
 ```
@@ -23,12 +43,42 @@ Isi variabel berikut dengan password yang **kuat dan unik**:
 - `MYSQL_ROOT_PASSWORD` — Password root MySQL
 - `NPM_DB_PASSWORD` — Password internal untuk database Nginx Proxy Manager
 
-### 2. Jalankan
+### 4. Jalankan Infra
+
+Setelah file `.env.production` dikonfigurasi, jalankan container infra:
 ```bash
 docker compose up -d
 ```
 
-### 3. Akses Nginx Proxy Manager
+### 5. Clone dan Deploy Aplikasi
+
+Setelah infrastruktur berjalan, Anda bisa meng-clone aplikasi ke folder `apps`:
+```bash
+cd /srv/workspace
+mkdir apps
+cd apps
+
+# Clone app nya, misal:
+git clone https://github.com/Zenalghi/master-gambar master-gambar
+```
+
+Hasil akhirnya, struktur direktori workspace akan seperti ini:
+```text
+/srv/workspace/
+│
+├── infra/
+│
+└── apps/
+    └── master-gambar/
+```
+
+Selanjutnya masuk ke direktori aplikasi dan deploy menggunakan `docker-compose.prod.yml`:
+```bash
+cd master-gambar
+docker compose -f docker-compose.prod.yml up -d
+```
+
+### 6. Akses Nginx Proxy Manager
 - URL: `http://<IP-SERVER>:81`
 - Default Email: `admin@example.com`
 - Default Password: `changeme`
@@ -67,6 +117,7 @@ FLUSH PRIVILEGES;
 Jalankan script berikut **SEKALI** agar Docker dan semua compose project otomatis menyala saat PC/server dinyalakan:
 
 ```bash
+cd /srv/workspace/infra
 sudo bash setup-autostart.sh
 ```
 
@@ -85,13 +136,14 @@ bash backup/autobackup.sh
 ```
 
 ### Setup Cron Otomatis (Setiap Hari Jam 12:00 Siang)
-```bash
-(crontab -l 2>/dev/null; echo "0 12 * * * cd ~/infra && bash backup/autobackup.sh >> /var/log/infra-backup.log 2>&1") | crontab -
-```
+
+Cron backup akan terpasang secara otomatis ketika Anda menjalankan script `setup-autostart.sh` pada langkah Auto-Start sebelumnya.
 
 ### Verifikasi Cron
+
+Karena script `setup-autostart.sh` dijalankan dengan `sudo`, maka cron terpasang pada user root. Untuk memverifikasinya, jalankan:
 ```bash
-crontab -l
+sudo crontab -l
 ```
 
 ---

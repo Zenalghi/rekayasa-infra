@@ -45,10 +45,11 @@ services:
       MYSQL_DATABASE: "npm"
       MYSQL_USER: "npm"
       MYSQL_PASSWORD: "${NPM_DB_PASSWORD}"
-    # PORT TIDAK DI-EXPOSE KE HOST SECARA DEFAULT UNTUK KEAMANAN
-    # Jika butuh remote (HeidiSQL), gunakan SSH Tunnel ke port 3306.
-    # ports:
-    #   - "127.0.0.1:3306:3306"
+    # MySQL hanya dibuka pada interface localhost.
+    # Tidak dapat diakses langsung dari LAN maupun Internet.
+    # Akses GUI seperti HeidiSQL dilakukan melalui SSH Tunnel.
+    ports:
+      - "127.0.0.1:3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf:ro

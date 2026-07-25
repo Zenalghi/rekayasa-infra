@@ -153,13 +153,13 @@ sudo systemctl status docker
 
 ### Akses Database via HeidiSQL (SSH Tunnel)
 
-Karena port MySQL **tidak di-expose ke host**, admin dapat mengakses database menggunakan SSH Tunnel:
+Karena port MySQL **hanya dibuka pada interface localhost (127.0.0.1)** dan tidak diekspos ke publik, admin dapat mengakses database dengan aman menggunakan metode SSH Tunnel:
 
 1. Buka HeidiSQL → New Session → Pilih **SSH Tunnel**
 2. Isi:
    - SSH Host: `<IP Server>`
    - SSH User: `<User SSH>`
-   - MySQL Host: `infra-mysql`
+   - MySQL Host: `127.0.0.1` (atau `localhost`)
    - MySQL Port: `3306`
    - User: `root`
    - Password: `<MYSQL_ROOT_PASSWORD>`

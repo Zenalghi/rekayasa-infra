@@ -99,3 +99,4 @@ echo -e "${YELLOW}-> Membersihkan backup yang lebih tua dari ${RETENTION_DAYS} h
 find "${BACKUP_DIR}" -name "infra-backup-*.tar.gz" -type f -mtime +${RETENTION_DAYS} -delete
 
 echo -e "${BLUE}=== Proses Backup Infrastruktur Selesai ===${NC}"
+echo -e " "

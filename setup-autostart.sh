@@ -48,8 +48,8 @@ echo ""
 echo -e "${BLUE}[3/3] Mengatur Cron Backup harian (12:00 Siang)...${NC}"
 mkdir -p /srv/workspace/logs
 if ! crontab -l 2>/dev/null | grep -q "backup/autobackup.sh"; then
-    (crontab -l 2>/dev/null; echo "0 12 * * * cd /srv/workspace/infra && bash backup/autobackup.sh >> /srv/workspace/logs/1-infra.log 2>&1") | crontab -
-    echo -e "${GREEN}  ✓ Cron backup berhasil ditambahkan (Log: /srv/workspace/logs/1-infra.log)${NC}"
+    (crontab -l 2>/dev/null; echo "0 12 * * * cd /srv/workspace/infra && bash backup/autobackup.sh >> /srv/workspace/logs/1-cron-infra.log 2>&1") | crontab -
+    echo -e "${GREEN}  ✓ Cron backup berhasil ditambahkan (Log: /srv/workspace/logs/1-cron-infra.log)${NC}"
 else
     echo -e "${YELLOW}  - Cron backup sudah ada (skip)${NC}"
 fi

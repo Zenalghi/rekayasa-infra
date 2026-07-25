@@ -80,6 +80,17 @@ sudo systemctl status docker
 sudo crontab -l
 ```
 
+### 7. Update Infrastruktur (Maintenance)
+
+Jika di masa depan terdapat update atau penambahan *service* baru di repositori `infra`, Anda bisa memperbarui *server* secara aman tanpa perlu me-restart semuanya secara manual.
+
+Jalankan *script* berikut:
+```bash
+cd /srv/workspace/infra
+bash update-safe.sh
+```
+*Script ini akan otomatis melakukan backup terlebih dahulu, menarik (pull) kode terbaru dari repositori Git, mengunduh image Docker terbaru (jika ada), dan menerapkan perubahan.*
+
 ---
 
 ## Part 2: Instalasi Aplikasi

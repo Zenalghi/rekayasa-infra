@@ -47,8 +47,8 @@ if docker ps --format '{{.Names}}' | grep -q "infra-mysql"; then
     DB_DUMP_FILE="${TARGET_FOLDER}/mysql_alldbs_${DATE_TAG}.sql.gz"
     
     # Gunakan exec langsung untuk menjalankan mysqldump di dalam container
-    docker exec infra-mysql mysqldump \
-        -u root -p"${MYSQL_ROOT_PASSWORD}" \
+    docker exec -e MYSQL_PWD="${MYSQL_ROOT_PASSWORD}" infra-mysql mysqldump \
+        -u root \
         --all-databases \
         --single-transaction \
         --routines --events | gzip > "${DB_DUMP_FILE}"

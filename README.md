@@ -79,6 +79,7 @@ Verifikasi Docker & Cron:
 sudo systemctl status docker
 sudo crontab -l
 ```
+> 📘 **Panduan Restore:** Untuk mengetahui cara memulihkan data MySQL, Nginx, dan SSL dari file backup yang dihasilkan cron, baca: [`backup/README.md`](./backup/README.md).
 
 ### 7. Update Infrastruktur (Maintenance)
 

@@ -4,7 +4,7 @@
 # =====================================================================
 # Script ini akan:
 # 1. Enable Docker service agar otomatis menyala saat boot
-# 2. Membuat systemd service yang menjalankan infra + semua app saat boot
+# 2. Membuat cron job harian untuk autobackup (jam 12:00)
 #
 # Jalankan SEKALI saja dengan: sudo bash setup-autostart.sh
 # =====================================================================

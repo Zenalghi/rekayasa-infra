@@ -21,9 +21,10 @@ Langkah-langkah berikut hanya perlu dijalankan **satu kali** saat server baru pe
 
 ### 1. Persiapan Workspace
 
-Buat folder workspace dan atur permission di server:
+Buat struktur folder workspace utama (termasuk folder `apps` dan `logs`) dan atur permission-nya di server:
 ```bash
-sudo mkdir -p /srv/workspace
+sudo mkdir -p /srv/workspace/apps
+sudo mkdir -p /srv/workspace/logs
 sudo chown -R "$(whoami)":"$(whoami)" /srv/workspace
 ls -ld /srv/workspace
 ```
@@ -64,15 +65,19 @@ docker compose up -d
 
 > **Catatan:** Pada versi Nginx Proxy Manager terbaru, Anda tidak perlu lagi login dengan email/password default. Saat pertama kali mengakses halaman web admin, Anda akan langsung disuguhkan form pendaftaran untuk mengisi **Full Name, Email, dan New Password** akun Admin Anda.
 
-### 6. Setup Backup Otomatis
+### 6. Auto-Start & Setup Backup Otomatis
 
-Sangat penting untuk memastikan infrastruktur Anda memiliki jadwal backup. Pasang cron job untuk mem-backup MySQL, konfigurasi NPM, dan SSL secara rutin:
+Jalankan script berikut **SEKALI** agar Docker otomatis menyala saat server di-restart, sekaligus memasang jadwal cron backup otomatis untuk infrastruktur:
+
 ```bash
-(crontab -l 2>/dev/null; echo "0 12 * * * cd ~/infra && bash backup/autobackup.sh >> /var/log/infra-backup.log 2>&1") | crontab -
+cd /srv/workspace/infra
+sudo bash setup-autostart.sh
 ```
-Verifikasi cron berjalan:
+
+Verifikasi Docker & Cron:
 ```bash
-crontab -l
+sudo systemctl status docker
+sudo crontab -l
 ```
 
 ---
@@ -85,10 +90,7 @@ Langkah-langkah berikut dilakukan ketika Infrastruktur (Part 1) **sudah berjalan
 
 Clone repositori aplikasi (misalnya: `master-gambar`) ke folder `apps`:
 ```bash
-cd /srv/workspace
-mkdir -p apps
-cd apps
-
+cd /srv/workspace/apps
 git clone https://github.com/Zenalghi/master-gambar master-gambar
 ```
 
@@ -135,19 +137,7 @@ Terakhir, daftarkan domain/IP aplikasi Anda di panel Nginx Proxy Manager (Port 8
 
 ## Maintenance Tambahan
 
-### Auto-Start Saat Boot
 
-Jalankan script berikut **SEKALI** agar Docker otomatis menyala saat PC/server di-restart:
-
-```bash
-cd /srv/workspace/infra
-sudo bash setup-autostart.sh
-```
-
-Verifikasi:
-```bash
-sudo systemctl status docker
-```
 
 
 

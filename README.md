@@ -83,14 +83,26 @@ sudo crontab -l
 
 ### 7. Update Infrastruktur (Maintenance)
 
-Jika di masa depan terdapat update atau penambahan *service* baru di repositori `infra`, Anda bisa memperbarui *server* secara aman tanpa perlu me-restart semuanya secara manual.
+Jika di masa depan terdapat update atau penambahan *service* baru di repositori `infra`, Anda bisa memperbarui *server* secara aman dengan dua pilihan metode:
 
-Jalankan *script* berikut:
+#### Opsi A: Update Manual melalui Terminal SSH
+Jalankan *script* berikut di dalam server:
 ```bash
 cd /srv/workspace/infra
 bash update-safe.sh
 ```
 *Script ini akan otomatis melakukan backup terlebih dahulu, menarik (pull) kode terbaru dari repositori Git, mengunduh image Docker terbaru (jika ada), dan menerapkan perubahan.*
+
+#### Opsi B: Update Otomatis via CI/CD (GitHub Actions) ⭐ Rekomendasi
+Repositori ini telah dilengkapi dengan workflow CI/CD modern di file `.github/workflows/deploy-infra.yml` menggunakan sistem **Self-Hosted Runner**:
+- **Bebas SSH / Terminal**: Anda tidak perlu lagi login ke terminal Putty atau VS Code Remote SSH untuk melakukan update rutin.
+- **Trigger Manual yang Aman (`workflow_dispatch`)**: Update hanya akan dijalankan saat Anda menghendakinya secara sadar.
+- **Cara Penggunaan**: 
+  1. Buka repositori `infra` di Browser atau aplikasi **GitHub Mobile** di HP Anda.
+  2. Masuk ke tab **Actions** → Pilih workflow **Safe Deploy Infrastruktur (SOHO Production)**.
+  3. Tekan tombol hijau **Run workflow** (opsional: isi catatan alasan deploy).
+  4. Robot CI/CD lokal akan mengarahkan server untuk mengecek kondisi, melakukan backup, dan memperbarui kontainer Anda secara otomatis!
+  *(Catatan: Keamanan Anda terbukti terjaga tanpa memerlukan konfigurasi GitHub Secrets apapun, karena runner mengeksekusi script lokal secara internal).*
 
 ---
 

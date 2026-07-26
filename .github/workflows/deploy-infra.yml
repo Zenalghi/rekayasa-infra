@@ -1,0 +1,58 @@
+name: 🛡️ Safe Deploy Infrastruktur (SOHO Production)
+
+on:
+  # 1. TRIGGER MANUAL (workflow_dispatch)
+  #    Pemicu utama yang sangat disarankan untuk server Infrastruktur.
+  #    Anda dapat menekan tombol "Run workflow" di web GitHub atau aplikasi HP 
+  #    tanpa harus membuka terminal SSH atau Putty ke dalam server.
+  workflow_dispatch:
+    inputs:
+      catatan_deploy:
+        description: 'Alasan atau catatan maintenance infrastruktur'
+        required: false
+        default: 'Maintenance rutin & pemantapan kontainer MySQL/NPM'
+
+  # 2. TRIGGER PUSH & ATURAN BLOKIR DOKUMEN (paths-ignore)
+  #    Disarankan tetap dalam mode non-aktif (#) agar Infrastruktur kritis 
+  #    tidak me-reload kontainer hanya karena push biasa. Jika ingin diaktifkan,
+  #    hilangkan tanda pager (#) di bawah ini:
+  #
+  # push:
+  #   branches:
+  #     - main
+  #     - master
+  #   paths-ignore:
+  #     - '**.md'          # Blokir eksekusi jika yang diubah hanya file Markdown (.md)
+  #     - 'README.md'
+  #     - 'backup/README.md'
+  #     - '.env.example'
+  #     - '.gitignore'
+
+jobs:
+  deploy-infra-soho:
+    name: ⚓ Update Infrastruktur SOHO
+    # Mengabaikan trigger jika ada Pull Request eksternal (mengamanan dari dari dari publik)
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    runs-on: self-hosted
+
+    steps:
+      - name: 📋 Info Eksekusi Maintenance Infra
+        run: |
+          echo "================================================="
+          echo "  ⚓ Mulai Eksekusi CI/CD Infrastruktur"
+          echo "  👤 Aktor   : ${{ github.actor }}"
+          echo "  🎯 Pemicu  : ${{ github.event_name }}"
+          echo "  📝 Catatan : ${{ github.event.inputs.catatan_deploy || 'Automated Infra Update' }}"
+          echo "================================================="
+
+      - name: 🔄 Eksekusi Safe Update Infra (Full Backup + Git Pull + Docker Compose Up)
+        run: |
+          cd /srv/workspace/infra
+          bash update-safe.sh
+
+      - name: ✅ Verifikasi Status Service (MySQL & Nginx Proxy Manager)
+        run: |
+          cd /srv/workspace/infra
+          docker compose ps
+          echo ""
+          echo "🎉 Proses Maintenance Infrastruktur di Homeserver SOHO Berhasil!"

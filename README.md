@@ -97,12 +97,31 @@ bash update-safe.sh
 Repositori ini telah dilengkapi dengan workflow CI/CD modern di file `.github/workflows/deploy-infra.yml` menggunakan sistem **Self-Hosted Runner**:
 - **Bebas SSH / Terminal**: Anda tidak perlu lagi login ke terminal Putty atau VS Code Remote SSH untuk melakukan update rutin.
 - **Trigger Manual yang Aman (`workflow_dispatch`)**: Update hanya akan dijalankan saat Anda menghendakinya secara sadar.
-- **Cara Penggunaan**: 
-  1. Buka repositori `infra` di Browser atau aplikasi **GitHub Mobile** di HP Anda.
-  2. Masuk ke tab **Actions** → Pilih workflow **Safe Deploy Infrastruktur (SOHO Production)**.
-  3. Tekan tombol hijau **Run workflow** (opsional: isi catatan alasan deploy).
-  4. Robot CI/CD lokal akan mengarahkan server untuk mengecek kondisi, melakukan backup, dan memperbarui kontainer Anda secara otomatis!
-  *(Catatan: Keamanan Anda terbukti terjaga tanpa memerlukan konfigurasi GitHub Secrets apapun, karena runner mengeksekusi script lokal secara internal).*
+
+**🔧 Persiapan Sekali Pakai: Mendaftarkan VM / Homeserver sebagai Runner (5 Menit):**
+1. Buka repositori `infra` di Browser komputer Anda → Klik menu **Settings** → **Actions** → **Runners**.
+2. Klik tombol hijau **New self-hosted runner** → Pilih OS **Linux** (Arsitektur x64).
+3. **Di mana harus paste perintahnya? (Anti-Bentrok):**  
+   **JANGAN** di dalam `/srv/workspace`! Buka terminal SSH Anda, berdirilah di **Home Directory (`~`)**, dan buat folder khusus dengan nama `runner-infra`:
+   ```bash
+   mkdir -p ~/runner-infra && cd ~/runner-infra
+   ```
+   Setelah itu, copas perintah `curl`, `tar`, dan `./config.sh` yang tertera di halaman Web GitHub Anda ke dalam folder tersebut.
+   *(Kenapa di Home? Agar agen Runner hidup terpisah dari file project Anda di `/srv/workspace/infra` sehingga **100% tidak akan bentrok**).*
+4. **🔥 Tip Pro (Agar Runner menyala otomatis 24/7 di background & tahan reboot server):**  
+   Setelah selesai konfigurasi (`./config.sh`), *jangan* jalankan `./run.sh` manual (nanti mati saat SSH ditutup). Pasang runner sebagai *systemd service* di Linux dengan mengetikkan:
+   ```bash
+   sudo ./svc.sh install
+   sudo ./svc.sh start
+   ```
+   *Selamat! Server Anda resmi tersambung ke GitHub secara privat. Anda tidak perlu menyentuh SSH ini lagi.*
+
+**📱 Cara Penggunaan Update Otomatis:** 
+1. Buka repositori `infra` di Browser atau aplikasi **GitHub Mobile** di HP Anda.
+2. Masuk ke tab **Actions** → Pilih workflow **Safe Deploy Infrastruktur (SOHO Production)**.
+3. Tekan tombol hijau **Run workflow** (opsional: isi catatan alasan deploy).
+4. Robot CI/CD lokal akan mengarahkan server untuk mengecek kondisi, melakukan backup, dan memperbarui kontainer Anda secara otomatis!
+*(Catatan: Keamanan Anda terbukti terjaga tanpa memerlukan konfigurasi GitHub Secrets apapun, karena runner mengeksekusi script lokal secara internal).*
 
 ---
 

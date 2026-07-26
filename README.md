@@ -139,13 +139,23 @@ git clone https://github.com/Zenalghi/master-gambar master-gambar
 
 ### 2. Membuat Database & User untuk Aplikasi
 
-Setiap aplikasi harus memiliki database dan kredensialnya sendiri di dalam MySQL Infra:
+Setiap aplikasi yang berjalan di Homeserver Anda harus memiliki database dan akun kredensialnya sendiri di dalam MySQL Infra (untuk mengisolasi keamanan agar tidak menggunakan user root). Anda memiliki dua cara untuk membuatnya:
 
+#### Opsi A: Cara Visual & Cepat via HeidiSQL (Recommended untuk Pengguna Windows) ⭐
+Tanpa perlu mengetikan baris perintah SQL yang rumit di terminal, Anda dapat memanfaatkan GUI di laptop Windows Anda:
+1. Buka aplikasi **HeidiSQL** dan hubungkan ke Server MySQL Infra Anda (menggunakan IP VM/SOHO atau jaringan Tailscale dengan kredensial root).
+2. Di panel atas, klik ikon **User Manager** (*Pengelola Pengguna* / ikon dua orang) atau menu **Tools → User Manager**.
+3. Klik tombol **Add** (Tambahkan) di pojok kiri atas untuk membuat user baru (misalnya: `master_gambar_user`), lalu ketikkan Password yang kuat. Di bagian *From Host*, atur menjadi `%` (Anywhere) agar kontainer jaringan Docker lain bisa menyambungkannya.
+4. Pada tab **Database exceptions**, klik tombol **Add object** → Centang atau ketuk *Create new database* (buat database baru bernamakan `master_gambar_db`).
+5. Centang seluruh hak akses (*ALL PRIVILEGES*) khusus pada database `master_gambar_db` tersebut, lalu klik **Save** (Simpan) dan tutup jendela.
+*Selesai! Database dan User MySQL langsung tercipta mulus dalam hitungan detik tanpa membuka SSH.*
+
+#### Opsi B: Cara Manual via Terminal SQL
+Jika Anda sedang berada langsung di terminal SSH server, Anda dapat mengeksekusinya melaui command line:
 ```bash
 # Masuk ke MySQL infra sebagai root
 docker exec -it infra-mysql mysql -u root -p
 ```
-
 Jalankan perintah SQL berikut:
 ```sql
 -- Contoh untuk aplikasi master-gambar

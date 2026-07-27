@@ -175,7 +175,11 @@ Masuk ke folder aplikasi dan sesuaikan konfigurasi environment dengan database y
 cd /srv/workspace/apps/master-gambar
 cp .env.example .env.production
 ```
-Pastikan `DB_HOST=infra-mysql` dan sesuaikan kredensial `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
+> [!IMPORTANT]
+> **Poin Paling Kritis (Anti-Looping Error):** Buka file `.env.production` dan **WAJIB GANTI** nilai `DB_HOST` dari yang sebelumnya bawaan development (`127.0.0.1` / `localhost`) menjadi **`DB_HOST=infra-mysql`** dengan **`DB_PORT=3306`**!  
+> Jika Anda lupa mengubah `DB_HOST` ini, kontainer Laravel Anda akan mengira MySQL hidup di dalam tubuhnya sendiri, yang berakibat error log berulang-ulang: *`MySQL not ready (1/30), retrying...`*
+
+Sesuaikan juga kredensial `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` dengan yang Anda buat di HeidiSQL sebelumnya.
 
 ### 4. Deploy Aplikasi
 

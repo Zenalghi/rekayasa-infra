@@ -24,7 +24,7 @@ services:
       DB_MYSQL_PASSWORD: "${NPM_DB_PASSWORD}"
       DB_MYSQL_NAME: "npm"
       # Uncomment if IPv6 is not enabled on your host
-      # DISABLE_IPV6: 'true'
+      DISABLE_IPV6: 'true'
     volumes:
       - npm-data:/data
       - npm-letsencrypt:/etc/letsencrypt
